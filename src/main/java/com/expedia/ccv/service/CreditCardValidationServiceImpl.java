@@ -2,6 +2,7 @@ package com.expedia.ccv.service;
 
 import com.expedia.ccv.dto.CreditCardDto;
 import com.expedia.ccv.dto.CreditCardInfoDto;
+import com.expedia.ccv.dto.ResponseMessageDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,12 @@ import java.util.regex.Pattern;
 public class CreditCardValidationServiceImpl implements CreditCardValidationService{
 
   private static final Logger log = LoggerFactory.getLogger(CreditCardValidationServiceImpl.class);
+
+	private static List<String> blackListNumber;
+
+	static {
+		blackListNumber = addBlackListNumber();
+	}
 
   @Autowired
   private Set<Long> blockedCards;
@@ -47,17 +54,12 @@ public class CreditCardValidationServiceImpl implements CreditCardValidationServ
     //TODO Validate Number
   }
 
-
-	private static List<String> blackListNumber;
-
-	static {
-		blackListNumber = addBlackListNumber();
-	}
-
 	@Override
-	public String validateCard(CreditCardInfoDto cardInfo) {
+	public ResponseMessageDto validateCard(CreditCardInfoDto cardInfo) {
 		String result = "";
 		String cardNumber = "";
+		boolean isError = true;
+		ResponseMessageDto responsedto = new ResponseMessageDto();
 		try {
 			if (null != cardInfo.getCardNumber() && !cardInfo.getCardNumber().isEmpty()
 					&& null != cardInfo.getExpiryDate() && !cardInfo.getExpiryDate().isEmpty()) {
@@ -69,7 +71,8 @@ public class CreditCardValidationServiceImpl implements CreditCardValidationServ
 							|| Pattern.matches("^5[1-5][0-9]{14}$", cardNumber)) {
 						if (!validateCardExpiryDate(cardInfo.getExpiryDate())) {
 							if (validateCreditCardByLuhn(Long.parseLong(cardNumber))) {
-								result = "Credit card is valid";
+								//result = "Credit card is valid";
+								isError = false;
 							} else {
 								result = "Credit card Number you provided is invalid";
 							}
@@ -88,10 +91,12 @@ public class CreditCardValidationServiceImpl implements CreditCardValidationServ
 				result = "CardNumebr or ExpirtyDate are found Empty";
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			result = "Internal server error while validating creditcard";
 		}
 
-		return result;
+		responsedto.setError(isError);
+		responsedto.setErrorDiscription(result);
+		return responsedto;
 	}
 
 	private boolean validateCreditCardByLuhn(long number) {

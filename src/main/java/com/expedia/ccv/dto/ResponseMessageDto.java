@@ -1,8 +1,9 @@
 package com.expedia.ccv.dto;
 
+import org.springframework.http.HttpHeaders;
+
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter @Setter 
 public class ResponseMessageDto {
@@ -14,7 +15,7 @@ public class ResponseMessageDto {
 	private String responseMessage;
 
 	private String errorDiscription;
-
-	private Object data;
+	
+	private HttpHeaders httpHeaders;
 
 }
