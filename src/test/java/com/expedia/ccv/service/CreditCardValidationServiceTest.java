@@ -25,7 +25,7 @@ public class CreditCardValidationServiceTest {
             .isError(false)
             .responseMessage("")
             .build();
-    Assert.assertEquals("",expectedResult.isError(),false);
+    Assert.assertEquals("",expectedResult.isError(),actualResult.isError());
   }
 
   @Test
@@ -37,7 +37,7 @@ public class CreditCardValidationServiceTest {
             .isError(true)
             .errorDiscription("Expire date is invalid or it's expired")
             .build();
-    Assert.assertEquals("",expectedResult.getErrorDiscription(),expectedResult.getErrorDiscription());
+    Assert.assertEquals("",expectedResult.getErrorDiscription(),actualResult.getErrorDiscription());
   }
 
   @Test
@@ -49,31 +49,31 @@ public class CreditCardValidationServiceTest {
             .isError(true)
             .errorDiscription("Expire date is invalid or it's expired")
             .build();
-    Assert.assertEquals("",expectedResult.getErrorDiscription(),expectedResult.getErrorDiscription());
+    Assert.assertEquals("",expectedResult.getErrorDiscription(),actualResult.getErrorDiscription());
   }
 
   @Test
   public void validateCardTestWhenCardNumberInvalid(){
-    CreditCardInfoDto parameter = new CreditCardInfoDto("4893772908615855","25/15");
+    CreditCardInfoDto parameter = new CreditCardInfoDto("4893772908615858","12/22");
 
     ResponseMessageDto actualResult = creditCardValidationService.validateCard(parameter);
     ResponseMessageDto expectedResult = ResponseMessageDto.builder()
             .isError(true)
             .errorDiscription("Credit card Number you provided is invalid")
             .build();
-    Assert.assertEquals("",expectedResult.getErrorDiscription(),expectedResult.getErrorDiscription());
+    Assert.assertEquals("",expectedResult.getErrorDiscription(),actualResult.getErrorDiscription());
   }
 
   @Test
   public void validateCardTestWhenCardIsBlackListed(){
-    CreditCardInfoDto parameter = new CreditCardInfoDto("4788384538552446","25/15");
+    CreditCardInfoDto parameter = new CreditCardInfoDto("4788384538552446","12/22");
 
     ResponseMessageDto actualResult = creditCardValidationService.validateCard(parameter);
     ResponseMessageDto expectedResult = ResponseMessageDto.builder()
             .isError(true)
             .errorDiscription("This card is in blacklist")
             .build();
-    Assert.assertEquals("",expectedResult.getErrorDiscription(),expectedResult.getErrorDiscription());
+    Assert.assertEquals("",expectedResult.getErrorDiscription(),actualResult.getErrorDiscription());
   }
 
   @Test
@@ -85,7 +85,7 @@ public class CreditCardValidationServiceTest {
             .isError(true)
             .errorDiscription("CardNumebr or ExpirtyDate are found Empty")
             .build();
-    Assert.assertEquals("",expectedResult.getErrorDiscription(),expectedResult.getErrorDiscription());
+    Assert.assertEquals("",expectedResult.getErrorDiscription(),actualResult.getErrorDiscription());
   }
 
   @Test
@@ -97,6 +97,6 @@ public class CreditCardValidationServiceTest {
             .isError(true)
             .errorDiscription("CardNumebr or ExpirtyDate are found Empty")
             .build();
-    Assert.assertEquals("",expectedResult.getErrorDiscription(),expectedResult.getErrorDiscription());
+    Assert.assertEquals("",expectedResult.getErrorDiscription(),actualResult.getErrorDiscription());
   }
 }
