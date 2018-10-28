@@ -1,6 +1,5 @@
 package com.expedia.ccv.service;
 
-import com.expedia.ccv.dto.CreditCardDto;
 import com.expedia.ccv.dto.CreditCardInfoDto;
 import com.expedia.ccv.dto.ResponseMessageDto;
 import org.slf4j.Logger;
@@ -10,8 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,31 +25,6 @@ public class CreditCardValidationServiceImpl implements CreditCardValidationServ
 	static {
 		blackListNumber = addBlackListNumber();
 	}
-
-  @Autowired
-  private Set<Long> blockedCards;
-
-  @Override
-  public void validateCard(CreditCardDto cardDto) {
-
-    log.debug("Card No: {}  ||  Expiry Date: {}", cardDto.getCardNo(), cardDto.getExpiryDate());
-
-    //TODO Format Number and Expiry date
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yy");
-    YearMonth expiryDate = YearMonth.parse(cardDto.getExpiryDate(),formatter);
-    log.debug("Time : "+ expiryDate.toString());
-
-    //TODO Check weather card is blocked
-    log.debug("BLocked Card Size: {}", blockedCards.size());
-
-    //TODO Validate expiry date
-    if(expiryDate.isBefore(YearMonth.now())){
-      log.debug("Invalid");
-      //TODO throw exception
-    }
-
-    //TODO Validate Number
-  }
 
 	@Override
 	public ResponseMessageDto validateCard(CreditCardInfoDto cardInfo) {

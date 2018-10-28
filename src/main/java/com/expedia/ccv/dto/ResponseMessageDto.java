@@ -1,11 +1,12 @@
 package com.expedia.ccv.dto;
 
+import lombok.*;
 import org.springframework.http.HttpHeaders;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter @Setter 
+@Getter @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class ResponseMessageDto {
 
 	private String responseCode;
