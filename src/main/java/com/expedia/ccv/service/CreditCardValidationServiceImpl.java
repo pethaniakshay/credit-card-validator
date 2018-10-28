@@ -6,16 +6,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
 @Service
-public class CreditCardValidationImpl implements CreditCardValidationService {
+public class CreditCardValidationServiceImpl implements CreditCardValidationService{
 
-  private static final Logger log = LoggerFactory.getLogger(CreditCardValidationImpl.class);
+  private static final Logger log = LoggerFactory.getLogger(CreditCardValidationServiceImpl.class);
 
   @Autowired
   private Set<Long> blockedCards;
@@ -24,8 +22,6 @@ public class CreditCardValidationImpl implements CreditCardValidationService {
   public void validateCard(CreditCardDto cardDto) {
 
     log.debug("Card No: {}  ||  Expiry Date: {}", cardDto.getCardNo(), cardDto.getExpiryDate());
-
-
 
     //TODO Format Number and Expiry date
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yy");

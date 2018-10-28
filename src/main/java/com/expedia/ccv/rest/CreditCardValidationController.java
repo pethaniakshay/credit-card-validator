@@ -23,6 +23,4 @@ public class CreditCardValidationController {
     creditCardValidationService.validateCard(cardDto);
     return new ResponseEntity<>(HttpStatus.OK);
   }
-
-
 }
