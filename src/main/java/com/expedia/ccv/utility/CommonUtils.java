@@ -61,7 +61,6 @@ public class CommonUtils {
 		boolean isCardExpired = false;
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat(CommonConstants.DATE_FORMAT);
-			sdf.setLenient(false);
 			Date cardExpiryDate = sdf.parse(date);
 			isCardExpired = cardExpiryDate.before(new Date());
 		} catch (ParseException e) {
