@@ -1,6 +1,6 @@
 # Credit Card Validator
 
-Credit card validator REST API in spring boot
+Credit card validator REST API in spring boot with Test Cases (JUnit + Mockito)
 
 URL : localhost:8080/CreditCardValidatorApp/creditCard/
 
