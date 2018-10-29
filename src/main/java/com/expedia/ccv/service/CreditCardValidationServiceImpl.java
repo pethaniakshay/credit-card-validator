@@ -1,135 +1,76 @@
 package com.expedia.ccv.service;
 
-import com.expedia.ccv.dto.CreditCardInfoDto;
-import com.expedia.ccv.dto.ResponseMessageDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import com.expedia.ccv.dto.CreditCardInfoDto;
+import com.expedia.ccv.dto.ResponseMessageDto;
+import com.expedia.ccv.utility.CommonUtils;
+import com.expedia.ccv.utility.constants.CommonConstants;
+
+/**
+ * @author Ashish.Patel
+ *
+ */
+
 @Service
-public class CreditCardValidationServiceImpl implements CreditCardValidationService{
+public class CreditCardValidationServiceImpl implements CreditCardValidationService {
 
-  private static final Logger log = LoggerFactory.getLogger(CreditCardValidationServiceImpl.class);
+	private static final Logger log = LoggerFactory.getLogger(CreditCardValidationServiceImpl.class);
 
-	private static List<String> blackListNumber;
-
-	static {
-		blackListNumber = addBlackListNumber();
-	}
-
+	/**
+	 * This method is used for validateCreditCard.
+	 * @param CreditCardInfoDto This is the first parameter to validateCard
+	 * @return ResponseMessageDto
+	 */
 	@Override
 	public ResponseMessageDto validateCard(CreditCardInfoDto cardInfo) {
+		log.info("Inside validateCard method of CreditCardValidationServiceImpl");
 		String result = "";
 		String cardNumber = "";
 		boolean isError = true;
+
 		ResponseMessageDto responsedto = new ResponseMessageDto();
 		try {
 			if (null != cardInfo.getCardNumber() && !cardInfo.getCardNumber().isEmpty()
 					&& null != cardInfo.getExpiryDate() && !cardInfo.getExpiryDate().isEmpty()) {
 
 				cardNumber = cardInfo.getCardNumber().replaceAll("\\s", "");
-				if (!blackListNumber.contains(cardNumber)) {
+				if (!CommonUtils.getBlackListNumber().contains(cardNumber)) {
 
-					if (Pattern.matches("^4[0-9]{15}$", cardNumber)
-							|| Pattern.matches("^5[1-5][0-9]{14}$", cardNumber)) {
-						if (!validateCardExpiryDate(cardInfo.getExpiryDate())) {
-							if (validateCreditCardByLuhn(Long.parseLong(cardNumber))) {
-								//result = "Credit card is valid";
+					if (Pattern.matches(CommonConstants.VISA_CARD_REGEX, cardNumber)
+							|| Pattern.matches(CommonConstants.MASTER_CARD_REGEX, cardNumber)) {
+						if (Pattern.matches(CommonConstants.EXPIRY_DATE_REGEX, cardInfo.getExpiryDate())
+								&& !CommonUtils.validateCardExpiryDate(cardInfo.getExpiryDate())) {
+							if (CommonUtils.validateCreditCardByLuhn(cardNumber)) {
 								isError = false;
 							} else {
-								result = "Credit card Number you provided is invalid";
+								result = CommonConstants.INVALID_CARD_MESSAGE;
 							}
 						} else {
-							result = "Expire date is invalid or it's expired";
+							result = CommonConstants.INVALID_EXPIRY_DATE_MESSAGE;
 						}
 					} else {
-						result = "Only Visa and MasterCard are accepted Please Enter valid card";
+						result = CommonConstants.VISA_MASTER_CARD_ACCEPTED;
 					}
 
 				} else {
-					result = "This card is in blacklist";
+					result = CommonConstants.BLACK_LIST_MESSAGE;
 				}
 
 			} else {
-				result = "CardNumebr or ExpirtyDate are found Empty";
+				result = CommonConstants.CARD_DATE_EMPTY_MESSAGE;
 			}
 		} catch (Exception e) {
-			result = "Internal server error while validating creditcard";
+			log.error(CommonConstants.INTERNAL_SERVER_ERROR);
+			result = CommonConstants.INTERNAL_SERVER_ERROR;
 		}
-
 		responsedto.setError(isError);
 		responsedto.setErrorDiscription(result);
 		return responsedto;
 	}
 
-	private boolean validateCreditCardByLuhn(long number) {
-		boolean isValid = false;
-		if ((sumOfDoubleEvenPlace(number) + sumOfOddPlace(number)) % 10 == 0) {
-			isValid = true;
-		}
-		return isValid;
-	}
-
-	private boolean validateCardExpiryDate(String date) {
-		boolean isExpired = false;
-		try {
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/YY");
-			simpleDateFormat.setLenient(false);
-			Date expiry = simpleDateFormat.parse(date);
-			isExpired = expiry.before(new Date());
-		} catch (ParseException e) {
-			isExpired = true;
-		}
-		return isExpired;
-
-	}
-
-	private static List<String> addBlackListNumber() {
-		List<String> blackListNumber = new ArrayList<>();
-		blackListNumber.add("4788384538552446");
-		blackListNumber.add("5144385438523845");
-		return blackListNumber;
-	}
-
-	// Get the result from Step 2
-	private static int sumOfDoubleEvenPlace(long number) {
-		int sum = 0;
-		String num = number + "";
-		for (int i = getSize(number) - 2; i >= 0; i -= 2)
-			sum += getDigit(Integer.parseInt(num.charAt(i) + "") * 2);
-
-		return sum;
-	}
-
-	// Return sum of odd-place digits in number
-	private static int sumOfOddPlace(long number) {
-		int sum = 0;
-		String num = number + "";
-		for (int i = getSize(number) - 1; i >= 0; i -= 2)
-			sum += Integer.parseInt(num.charAt(i) + "");
-		return sum;
-	}
-
-	// Return the number of digits in d
-	private static int getSize(long d) {
-		String num = d + "";
-		return num.length();
-	}
-
-	// Return this number if it is a single digit, otherwise,
-	// return the sum of the two digits
-	private static int getDigit(int number) {
-		if (number < 9)
-			return number;
-		return number / 10 + number % 10;
-	}
 }

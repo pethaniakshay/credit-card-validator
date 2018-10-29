@@ -4,6 +4,11 @@ import java.io.Serializable;
 
 import lombok.*;
 
+/**
+ * @author Ashish.Patel
+ *
+ */
+
 @Builder
 @Getter @Setter @ToString
 @AllArgsConstructor
