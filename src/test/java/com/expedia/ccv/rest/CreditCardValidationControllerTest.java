@@ -52,6 +52,7 @@ public class CreditCardValidationControllerTest {
 	private static final String responseMessage = "$.responseMessage";
 	private static final String error = "$.error";
 	private static final String errorDiscription = "$.errorDiscription";
+	private static final String URl = "/creditCard/";
 
 	/**
 	 * Test cases for valid Visa Card.
@@ -62,7 +63,7 @@ public class CreditCardValidationControllerTest {
 	@Test
 	public void validateCardTestForVisaCard() throws Exception {
 		String input = "{" + "\"cardNumber\": \"4790017555921691\"," + "\"expiryDate\": \"12/20\"" + "}";
-		mockMvc.perform(MockMvcRequestBuilders.post("/creditCard/").contentType(MediaType.APPLICATION_JSON)
+		mockMvc.perform(MockMvcRequestBuilders.post(URl).contentType(MediaType.APPLICATION_JSON)
 				.content(input).characterEncoding(UTF8).accept(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath(responseCode).value(HttpStatus.OK.value()))
 				.andExpect(jsonPath(responseMessage).value(CommonConstants.VALIDATE_SUCCESS_MESSAGE))
@@ -79,7 +80,7 @@ public class CreditCardValidationControllerTest {
 	@Test
 	public void validateCardTestForMasterCard() throws Exception {
 		String input = "{" + "\"cardNumber\": \"5450 4907 81871378\"," + "\"expiryDate\": \"12/20\"" + "}";
-		mockMvc.perform(MockMvcRequestBuilders.post("/creditCard/").contentType(MediaType.APPLICATION_JSON)
+		mockMvc.perform(MockMvcRequestBuilders.post(URl).contentType(MediaType.APPLICATION_JSON)
 				.content(input).characterEncoding("utf-8").accept(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.responseCode").value(HttpStatus.OK.value()))
 				.andExpect(jsonPath(responseMessage).value(CommonConstants.VALIDATE_SUCCESS_MESSAGE))
@@ -95,7 +96,7 @@ public class CreditCardValidationControllerTest {
 	@Test
 	public void validateCardTestWhenValueIsEmpty() throws Exception {
 		String input = "{" + "\"cardNumber\": \"\"," + "\"expiryDate\": \"\"" + "}";
-		mockMvc.perform(MockMvcRequestBuilders.post("/creditCard/").contentType(MediaType.APPLICATION_JSON)
+		mockMvc.perform(MockMvcRequestBuilders.post(URl).contentType(MediaType.APPLICATION_JSON)
 				.content(input).characterEncoding("utf-8").accept(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.responseCode").value(HttpStatus.UNPROCESSABLE_ENTITY.value()))
 				.andExpect(jsonPath(errorDiscription).value(CommonConstants.CARD_DATE_EMPTY_MESSAGE))
@@ -111,7 +112,7 @@ public class CreditCardValidationControllerTest {
 	@Test
 	public void validateCardTestWhenExpiryDateIsBlank() throws Exception {
 		String input = "{" + "\"cardNumber\": \"4790017555921691\"," + "\"expiryDate\": \"\"" + "}";
-		mockMvc.perform(MockMvcRequestBuilders.post("/creditCard/").contentType(MediaType.APPLICATION_JSON)
+		mockMvc.perform(MockMvcRequestBuilders.post(URl).contentType(MediaType.APPLICATION_JSON)
 				.content(input).characterEncoding("utf-8").accept(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.responseCode").value(HttpStatus.UNPROCESSABLE_ENTITY.value()))
 				.andExpect(jsonPath(errorDiscription).value(CommonConstants.CARD_DATE_EMPTY_MESSAGE))
@@ -127,7 +128,7 @@ public class CreditCardValidationControllerTest {
 	@Test
 	public void validateCardTestWhenCardNumberIsBlank() throws Exception {
 		String input = "{" + "\"cardNumber\": \"\"," + "\"expiryDate\": \"12/20\"" + "}";
-		mockMvc.perform(MockMvcRequestBuilders.post("/creditCard/").contentType(MediaType.APPLICATION_JSON)
+		mockMvc.perform(MockMvcRequestBuilders.post(URl).contentType(MediaType.APPLICATION_JSON)
 				.content(input).characterEncoding("utf-8").accept(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.responseCode").value(HttpStatus.UNPROCESSABLE_ENTITY.value()))
 				.andExpect(jsonPath(errorDiscription).value(CommonConstants.CARD_DATE_EMPTY_MESSAGE))
@@ -143,7 +144,7 @@ public class CreditCardValidationControllerTest {
 	@Test
 	public void validateCardTestWhenCardIsBlackListed() throws Exception {
 		String input = "{" + "\"cardNumber\": \"4788384538552446\"," + "\"expiryDate\": \"12/20\"" + "}";
-		mockMvc.perform(MockMvcRequestBuilders.post("/creditCard/").contentType(MediaType.APPLICATION_JSON)
+		mockMvc.perform(MockMvcRequestBuilders.post(URl).contentType(MediaType.APPLICATION_JSON)
 				.content(input).characterEncoding("utf-8").accept(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.responseCode").value(HttpStatus.UNPROCESSABLE_ENTITY.value()))
 				.andExpect(jsonPath(errorDiscription).value(CommonConstants.BLACK_LIST_MESSAGE))
@@ -159,7 +160,7 @@ public class CreditCardValidationControllerTest {
 	@Test
 	public void validateCardTestWhenCardNotVisaOrMaster() throws Exception {
 		String input = "{" + "\"cardNumber\": \"347964771140380\"," + "\"expiryDate\": \"12/20\"" + "}";
-		mockMvc.perform(MockMvcRequestBuilders.post("/creditCard/").contentType(MediaType.APPLICATION_JSON)
+		mockMvc.perform(MockMvcRequestBuilders.post(URl).contentType(MediaType.APPLICATION_JSON)
 				.content(input).characterEncoding("utf-8").accept(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.responseCode").value(HttpStatus.UNPROCESSABLE_ENTITY.value()))
 				.andExpect(jsonPath(errorDiscription).value(CommonConstants.VISA_MASTER_CARD_ACCEPTED))
@@ -175,7 +176,7 @@ public class CreditCardValidationControllerTest {
 	@Test
 	public void validateCardTestWhenCardIsExpired() throws Exception {
 		String input = "{" + "\"cardNumber\": \"4790017555921691\"," + "\"expiryDate\": \"04/12\"" + "}";
-		mockMvc.perform(MockMvcRequestBuilders.post("/creditCard/").contentType(MediaType.APPLICATION_JSON)
+		mockMvc.perform(MockMvcRequestBuilders.post(URl).contentType(MediaType.APPLICATION_JSON)
 				.content(input).characterEncoding("utf-8").accept(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.responseCode").value(HttpStatus.UNPROCESSABLE_ENTITY.value()))
 				.andExpect(jsonPath(errorDiscription).value(CommonConstants.INVALID_EXPIRY_DATE_MESSAGE))
@@ -191,7 +192,7 @@ public class CreditCardValidationControllerTest {
 	@Test
 	public void validateCardTestWhenExpiryDateIsInvalid() throws Exception {
 		String input = "{" + "\"cardNumber\": \"4790017555921691\"," + "\"expiryDate\": \"250/150\"" + "}";
-		mockMvc.perform(MockMvcRequestBuilders.post("/creditCard/").contentType(MediaType.APPLICATION_JSON)
+		mockMvc.perform(MockMvcRequestBuilders.post(URl).contentType(MediaType.APPLICATION_JSON)
 				.content(input).characterEncoding("utf-8").accept(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.responseCode").value(HttpStatus.UNPROCESSABLE_ENTITY.value()))
 				.andExpect(jsonPath(errorDiscription).value(CommonConstants.INVALID_EXPIRY_DATE_MESSAGE))
